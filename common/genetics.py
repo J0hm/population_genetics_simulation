@@ -34,17 +34,25 @@ def calculateFitness(targetChromosome, individualChromosomeList, chromosomeLengt
         calcFitness = similarities/chromosomeLength
         individualChromosomeList[i].fitness = calcFitness
 
+def maxFitness(individualList): 
+    max = 0
+    for i in range(len(individualList)):
+        if individualList[i].fitness > max:
+            max = individualList[i].fitness
+
+    return max
+
+
+def minFitness(individualList):
+    min = 999
+    for i in range(len(individualList)):
+        if individualList[i].fitness < min:
+            min = individualList[i].fitness
+
+    return min
+
+def meanFitness(individualList):
+
+
             
 
-
-alleleCount = 128
-popList = []
-popList = createPopulation(10, alleleCount)
-desiredChromosome = randChromosome(alleleCount)
-
-calculateFitness(desiredChromosome, popList, alleleCount)
-
-print("Desired:   ", desiredChromosome)
-
-for i in range(8):
-    print("Chromosome:", popList[i].chromosome, "Fitness:", popList[i].fitness)
