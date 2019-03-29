@@ -5,7 +5,7 @@ from math import *
 
 
 alleleCount = 128
-popList = createPopulation(128, alleleCount)
+popList = createPopulation(64, alleleCount)
 #desiredChromosome = randChromosome(alleleCount)
 desiredChromosome = randChromosome(alleleCount)
 
@@ -13,5 +13,7 @@ calculateFitness(desiredChromosome, popList, alleleCount)
 
 print("Desired:   ", desiredChromosome)
 
-for i in range(128):
+popList = sortByFitness(popList)
+
+for i in range(64):
     print("Chromosome:", popList[i].chromosome, "Fitness:", popList[i].fitness)

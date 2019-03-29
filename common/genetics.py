@@ -52,7 +52,17 @@ def minFitness(individualList):
     return min
 
 def meanFitness(individualList):
+    mean = 0
+    for i in range(len(individualList)):
+        mean += individualList[i].fitness
 
+    mean /= len(individualList)
+    return mean
 
-            
+def sortByFitness(individualList):
+    sortedList = sorted(individualList, key=lambda x: x.fitness, reverse=True)
 
+    return sortedList
+ 
+
+    
