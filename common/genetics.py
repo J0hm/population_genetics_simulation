@@ -5,6 +5,7 @@ class individual():
     def __init__(self, alleles = 8):
         self.chromosome = randChromosome(alleles)
         self.fitness = 0
+        self.reproductionChance = 0
 
 
 def randChromosome(length = 8):
@@ -21,19 +22,20 @@ def createPopulation(popSize, alleles = 8):
         individualList.append(individual(alleles))
     return individualList
 
-
-def calculateFitness(targetChromosome, individualChromosomeList, chromosomeLength):
-    for i in range(len(individualChromosomeList)):
+# Calculates the fitness of each individual in individualList
+def calculateFitness(targetChromosome, individualList, chromosomeLength):
+    for i in range(len(individualList)):
         similarities = 0
         counter = 0
-        for j in individualChromosomeList[i].chromosome:
+        for j in individualList[i].chromosome:
             if j == targetChromosome[counter:counter+1]:
                 similarities += 1
             counter += 1
 
         calcFitness = similarities/chromosomeLength
-        individualChromosomeList[i].fitness = calcFitness
+        individualList[i].fitness = calcFitness
 
+# Returns the max fitness of each individual in individualList
 def maxFitness(individualList): 
     max = 0
     for i in range(len(individualList)):
@@ -42,7 +44,7 @@ def maxFitness(individualList):
 
     return max
 
-
+# Returns the average fitness of each individual in individualList
 def minFitness(individualList):
     min = 999
     for i in range(len(individualList)):
@@ -51,6 +53,7 @@ def minFitness(individualList):
 
     return min
 
+# Returns the mean fitness of each individual in individualList
 def meanFitness(individualList):
     mean = 0
     for i in range(len(individualList)):
@@ -59,10 +62,28 @@ def meanFitness(individualList):
     mean /= len(individualList)
     return mean
 
+# Sorts individual by fitness.
+# Must be run after calculateFitness, because fitness defaults to zero
 def sortByFitness(individualList):
     sortedList = sorted(individualList, key=lambda x: x.fitness, reverse=True)
 
     return sortedList
+
+# Sorts individualList by reproduction chance. 
+# Must be run after findReproductionChance, because reproductionChance defaults to zero
+def sortByReprodutionChance(individualList):
+    sortedList = sorted(individualList, key = lambda x: x.reproductionChance, reverse = True)
+    return sortedList
+
+# Finds the chance for each individiual in individualList to reproduce each reproduction cycle. 
+# The total chances add to up to 1, and should be used to iterate reproduction
+def findReproductionChance(individualList, round = 10):
+    fitnessSum = 0
+    for i in range(0, len(individualList)):
+        fitnessSum += individualList[i].fitness
+
+    for i in range(0, len(individualList)):
+        individualList[i].reproductionChance = round((individualList[i].fitness / fitnessSum), round)
  
 
     

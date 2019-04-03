@@ -4,8 +4,8 @@ from tkinter import *
 from math import *
 
 
-alleleCount = 128
-popList = createPopulation(64, alleleCount)
+alleleCount = 32
+popList = createPopulation(32, alleleCount)
 #desiredChromosome = randChromosome(alleleCount)
 desiredChromosome = randChromosome(alleleCount)
 
@@ -13,7 +13,13 @@ calculateFitness(desiredChromosome, popList, alleleCount)
 
 print("Desired:   ", desiredChromosome)
 
-popList = sortByFitness(popList)
+findReproductionChance(popList)
+popList = sortByReprodutionChance(popList)
 
-for i in range(64):
-    print("Chromosome:", popList[i].chromosome, "Fitness:", popList[i].fitness)
+chanceSum = 0
+
+for i in range(32):
+    print("Chromosome:", popList[i].chromosome, "Fitness:", popList[i].fitness, "Reproduction Chance:", popList[i].reproductionChance)
+    chanceSum += popList[i].reproductionChance
+
+print("Chance Sum:", chanceSum)
