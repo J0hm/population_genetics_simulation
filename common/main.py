@@ -6,7 +6,6 @@ from math import *
 
 alleleCount = 32
 popList = createPopulation(32, alleleCount)
-#desiredChromosome = randChromosome(alleleCount)
 desiredChromosome = randChromosome(alleleCount)
 
 calculateFitness(desiredChromosome, popList, alleleCount)
