@@ -113,6 +113,7 @@ def weightedChoice(pickList, chanceList):
         # Check if sum is greater thanb a random 10 digit decimal from 0 to 1, if not
         # add to sum and check again.
         # Rand int could be from lowest to highest repro chance?
+        print("temp")
     pass
 
 def returnNextGen(individualList, mutateChance, populationSize):
