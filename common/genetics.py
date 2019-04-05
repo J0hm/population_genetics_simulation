@@ -93,46 +93,53 @@ def mutateChromosome(individual, mutateChance):
     pass
 
 # Independant assortment + 
-def produceOffspring(parent1, parent2):
+def produceOffspringChromosome(parent1, parent2):
     rand.seed()
     offspringChromosome = ""
     for i in range(0, len(parent1.chromosome)):
-        chooseParent = rand.randint(0, 1)
+        chooseParent = rand.random()
 
-        if chooseParent == 0:
+        if chooseParent > 0.5:
             offspringChromosome = offspringChromosome + parent1.chromosome[i:i+1]
         else:
             offspringChromosome += parent2.chromosome[i:i+1]
     
     return offspringChromosome
 
-# This is a specific choice algorithm thrown quickly together
-# It will only work in this specific case where the chances are in order
-def weightedChoice(pickList, chanceList):
-    for i in range(len(pickList)):
-        # Check if sum is greater thanb a random 10 digit decimal from 0 to 1, if not
-        # add to sum and check again.
-        # Rand int could be from lowest to highest repro chance?
-        print("temp")
-    pass
+# Returns the index of chanceList that was picked. Chances must be from 0 to a number
+def weightedChoice(chanceList):
+    # Starting values 
+    currentSum = chanceList[0]
+    rand.seed()
+    randFloat = round(rand.uniform(0, sum(chanceList)), 10) # Chances can add to any positive integer, this is used to account for errors that would happen if the range was 0 to 1 due to rounding 
 
-def returnNextGen(individualList, mutateChance, populationSize):
+    for i in range(0, len(chanceList)):
+        if randFloat <= currentSum:
+            chosenIndex = i
+            return chosenIndex
+        else:
+            currentSum += chanceList[i]
+
+def returnNextGen(individualList, mutateChance, populationSize, alleleCount):
     nextGen = []
     chanceList = []
+    rand.seed()
 
     # Sets lists on chances for weighted choice, same index's
     for i in range(0, len(individualList)):
         chanceList.append(individualList[i].reproductionChance)
-
+   
     for i in range(0, populationSize):
-        parent1 = weightedChoice(individualList, chanceList)
-        parent2 = weightedChoice(individualList, chanceList)
+        parent1index = weightedChoice(chanceList)
+        parent2index = weightedChoice(chanceList)
 
-    
+        print(parent1index, parent2index)
+        parent1 = individualList[parent1index]
+        parent2 = individualList[parent2index]
+
+        newIndividual = individual(alleleCount)
+        newIndividual.chromosome = produceOffspringChromosome(parent1, parent2)
+
+        nextGen.append(newIndividual)
+
     return nextGen
-    pass
-
-    
-
-
-    

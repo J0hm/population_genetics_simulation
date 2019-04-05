@@ -16,9 +16,18 @@ findReproductionChance(popList)
 popList = sortByReprodutionChance(popList)
 
 chanceSum = 0
+chanceList = []
 
-for i in range(32):
-    print("Chromosome:", popList[i].chromosome, "Fitness:", popList[i].fitness, "Reproduction Chance:", popList[i].reproductionChance)
-    chanceSum += popList[i].reproductionChance
+for i in range(0, len(popList)):
+        chanceList.append(popList[i].reproductionChance)
 
-print("Chance Sum:", chanceSum)
+print("Mean/Max/Min Fitness:", meanFitness(popList), maxFitness(popList), minFitness(popList))
+
+for i in range(9):
+    print("Gen:", i)
+    popList = returnNextGen(popList, 0, 32, 32)
+
+    calculateFitness(desiredChromosome, popList, alleleCount)
+    findReproductionChance(popList)
+    popList = sortByReprodutionChance(popList)
+    print("Mean/Max/Min Fitness:", meanFitness(popList), maxFitness(popList), minFitness(popList))
