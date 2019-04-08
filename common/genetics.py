@@ -90,7 +90,19 @@ def findReproductionChance(individualList, roundTo = 10):
 # Chance for a chromosome to mutate 
 # Chance for a specifific allele to mutate is mutateChance/chromosomeLength
 def mutateChromosome(individual, mutateChance):
+    rand.seed()
+    randFloat = rand.random()
+
+    if randFloat <= mutateChance:
+        randAllele = rand.randrange(0, len(individual.chromosome)) 
+        #if individual.chromosome(allele) = 1
+            #split into 0 to index -1, index+1 to end, 
+            #pt1 + newallele + pt2
+        
+        #return individual with new chromoskme
+
     pass
+
 
 # Independant assortment + 
 def produceOffspringChromosome(parent1, parent2):
@@ -111,15 +123,22 @@ def weightedChoice(chanceList):
     # Starting values 
     currentSum = chanceList[0]
     rand.seed()
+    chosenIndex = 0
+    chanceListLength = len(chanceList)
+
     randFloat = round(rand.uniform(0, sum(chanceList)), 10) # Chances can add to any positive integer, this is used to account for errors that would happen if the range was 0 to 1 due to rounding 
 
-    for i in range(0, len(chanceList)):
+    for j in range(chanceListLength):
         if randFloat <= currentSum:
-            chosenIndex = i
-            return chosenIndex
+            chosenIndex = j
+            break
         else:
-            currentSum += chanceList[i]
+            currentSum += chanceList[j]
 
+    return chosenIndex
+        
+# Returns the next generation
+# IndividualList must be a list of individuals with reproductionChance
 def returnNextGen(individualList, mutateChance, populationSize, alleleCount):
     nextGen = []
     chanceList = []
@@ -129,11 +148,11 @@ def returnNextGen(individualList, mutateChance, populationSize, alleleCount):
     for i in range(0, len(individualList)):
         chanceList.append(individualList[i].reproductionChance)
    
+
     for i in range(0, populationSize):
         parent1index = weightedChoice(chanceList)
         parent2index = weightedChoice(chanceList)
 
-        print(parent1index, parent2index)
         parent1 = individualList[parent1index]
         parent2 = individualList[parent2index]
 

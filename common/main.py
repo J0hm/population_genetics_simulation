@@ -21,13 +21,15 @@ chanceList = []
 for i in range(0, len(popList)):
         chanceList.append(popList[i].reproductionChance)
 
+for i in range(10):
+        print(weightedChoice(chanceList))
+
 print("Mean/Max/Min Fitness:", meanFitness(popList), maxFitness(popList), minFitness(popList))
 
-for i in range(9):
-    print("Gen:", i)
-    popList = returnNextGen(popList, 0, 32, 32)
-
-    calculateFitness(desiredChromosome, popList, alleleCount)
-    findReproductionChance(popList)
-    popList = sortByReprodutionChance(popList)
-    print("Mean/Max/Min Fitness:", meanFitness(popList), maxFitness(popList), minFitness(popList))
+for i in range(1, 32):
+   print("Gen:", i)
+   popList = returnNextGen(popList, 0, 32, 32)
+   calculateFitness(desiredChromosome, popList, alleleCount)
+   findReproductionChance(popList)
+   popList = sortByReprodutionChance(popList)
+   print("Mean/Max/Min Fitness:", meanFitness(popList), maxFitness(popList), minFitness(popList))
