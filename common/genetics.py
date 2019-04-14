@@ -108,7 +108,7 @@ def mutateChromosome(individual):
     return individual
 
 
-# Independant assortment + 
+# Independant assortment + production of offspring from two parents
 def produceOffspringChromosome(parent1, parent2):
     rand.seed()
     offspringChromosome = ""

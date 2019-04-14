@@ -21,7 +21,15 @@ class Window(Frame):
                 self.master.title("Genetics Simulation Program")
                 self.pack(fill=BOTH, expand=1)
 
-# Places a label with text at x,y. Streamlines this process but is not ideal for every situation
+# Class for storing data about whole generations
+class individualGeneration():
+        def __init__(self):
+                self.maxFitness = 0
+                self.minFitness = 0
+                self.meanFitness = 0
+
+
+# Places a label with text at x,y. Streamlines this process but is not ideal for every situation, as it does not let you change the value of the label
 def placeLabelAtPos(window, labelText, xPos, yPos, fontType = "Helvectica", fontSize = 16):
         newPlacedLabel = Label(window, text = labelText, font=(fontType, fontSize))
         newPlacedLabel.place(x=xPos, y=yPos)
@@ -35,21 +43,48 @@ calculateFitness(desiredChromosome, popList, alleleCount)
 findReproductionChance(popList)
 popList = sortByReprodutionChance(popList)
 
+popMeanFitness = meanFitness(popList)
+popMinFitness = minFitness(popList)
+popMaxFitness = maxFitness(popList)
+
+# Creates the main list for keeping data over generations
+individualGenList = []
+
+# Adds gen0 (starting gen) to 
+gen0 = individualGeneration()
+gen0.maxFitness = popMaxFitness
+gen0.minFitness = popMinFitness
+gen0.meanFitness= popMeanFitness
+
+individualGenList.insert(0, gen0)
+
 # Creates the root window
 root = Tk()
 root.geometry("600x600")
 app = Window(root)
 
-generationText = "Generation: " + str(gen)
-placeLabelAtPos(root, generationText, 0, 0)
+# Placing of GUI widgets
+generationText = "Current Generation: " + str(gen)
+labelGeneration = Label(root, text = generationText, font=("Helvectica", 16))
+labelGeneration.place(x=0, y=0)
 
-averageFitness = meanFitness(popList)
-averageFitnessText = "Average Fitness: " + str(round(averageFitness, 5))
-placeLabelAtPos(root, averageFitnessText, 0, 25)
+averageFitnessText = "Average Fitness: " + str(round(gen0.meanFitness, 5))
+labelMeanFitness = Label(root, text = averageFitnessText, font=("Helvectica", 16))
+labelMeanFitness.place(x=0, y=25)
 
-popMinFitness = minFitness(popList)
-minMaxFitnessText = "Min/Max Fitness: " + str(round(minFitness(popList), 5))  + ", " + str(round(maxFitness(popList), 5)) 
-placeLabelAtPos(root, minMaxFitnessText, 0, 50)
 
+minMaxFitnessText = "Min/Max Fitness: " + str(round(gen0.minFitness, 5))  + ", " + str(round(gen0.maxFitness, 5)) 
+labelMinMaxFitness = Label(root, text = minMaxFitnessText, font=("Helvectica", 16))
+labelMinMaxFitness.place(x=0, y=50)
+
+genListBox = Listbox(root, height=28, width = 25, font=("Helvectica", 12))
+genListBox.place(x=350, y=50)
+
+placeLabelAtPos(root, "Generation Fitness List", 352, 0)
+placeLabelAtPos(root, "Click to View Detailed Stats", 360, 25, fontSize=12)
+
+gen0 = individualGenList[0]
+gen0Text = "Generation 0: " + str(round(gen0.meanFitness, 10))
+genListBox.insert(0, gen0Text)
 root.mainloop()
 
