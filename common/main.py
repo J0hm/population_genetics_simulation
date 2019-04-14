@@ -34,6 +34,11 @@ def placeLabelAtPos(window, labelText, xPos, yPos, fontType = "Helvectica", font
         newPlacedLabel = Label(window, text = labelText, font=(fontType, fontSize))
         newPlacedLabel.place(x=xPos, y=yPos)
 
+
+# Sets the screen to the starting screen (gets input values)
+def restartSimulation():
+        pass
+
 # Finds starting values for algoritms
 popList = createPopulation(popSize, alleleCount)
 desiredChromosome = randChromosome(alleleCount)
@@ -64,18 +69,33 @@ root.geometry("600x600")
 app = Window(root)
 
 # Placing of GUI widgets
+placeLabelAtPos(root, "Enter Population Size", 0, 0, fontSize=12)
+popSizeEntry = Entry(root)
+popSizeEntry.place(x=170, y=3)
+popSizeEntry.insert(0, "100")
+
+placeLabelAtPos(root, "Enter Allele Count", 0, 20, fontSize=12)
+alleleCountEntry = Entry(root)
+alleleCountEntry.place(x=170, y=23)
+alleleCountEntry.insert(0, "64")
+
+placeLabelAtPos(root, "Enter Muatation Rate", 0, 40, fontSize=12)
+mutationRateEntry = Entry(root)
+mutationRateEntry.place(x=170, y=43)
+mutationRateEntry.insert(0, "0.05")
+
 generationText = "Current Generation: " + str(gen)
 labelGeneration = Label(root, text = generationText, font=("Helvectica", 16))
-labelGeneration.place(x=0, y=0)
+labelGeneration.place(x=0, y=100)
 
 averageFitnessText = "Average Fitness: " + str(round(gen0.meanFitness, 5))
 labelMeanFitness = Label(root, text = averageFitnessText, font=("Helvectica", 16))
-labelMeanFitness.place(x=0, y=25)
+labelMeanFitness.place(x=0, y=125)
 
 
 minMaxFitnessText = "Min/Max Fitness: " + str(round(gen0.minFitness, 5))  + ", " + str(round(gen0.maxFitness, 5)) 
 labelMinMaxFitness = Label(root, text = minMaxFitnessText, font=("Helvectica", 16))
-labelMinMaxFitness.place(x=0, y=50)
+labelMinMaxFitness.place(x=0, y=150)
 
 genListBox = Listbox(root, height=28, width = 25, font=("Helvectica", 12))
 genListBox.place(x=350, y=50)
@@ -86,5 +106,6 @@ placeLabelAtPos(root, "Click to View Detailed Stats", 360, 25, fontSize=12)
 gen0 = individualGenList[0]
 gen0Text = "Generation 0: " + str(round(gen0.meanFitness, 10))
 genListBox.insert(0, gen0Text)
+
 root.mainloop()
 
