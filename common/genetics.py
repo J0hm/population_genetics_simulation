@@ -35,6 +35,7 @@ def calculateFitness(targetChromosome, individualList, chromosomeLength):
             counter += 1
 
         calcFitness = similarities/chromosomeLength
+        
         individualList[i].fitness = calcFitness
 
 # Returns the max fitness of each individual in individualList
