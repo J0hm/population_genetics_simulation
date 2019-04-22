@@ -23,7 +23,7 @@ class Window(Frame):
                 self.init_window()
 
         def init_window(self):
-                self.master.title("Genetics Simulation Program")
+                self.master.title("Population Genetics Simulator")
                 self.pack(fill=BOTH, expand=1)
 
 # Class for storing data about whole generations
@@ -148,7 +148,7 @@ def changedSelection(evt):
 
 # Creates the root window
 root = Tk()
-root.geometry("600x600")
+root.geometry("600x340")
 app = Window(root)
 
 # Placing of GUI widgets
@@ -189,7 +189,7 @@ minMaxFitnessText = "Min/Max Fitness: " + str(round(individualGenList[0].minFitn
 labelMinMaxFitness = Label(root, text = minMaxFitnessText, font=("Helvectica", 16))
 labelMinMaxFitness.place(x=0, y=150)
 
-genListBox = Listbox(root, height=28, width = 25, font=("Helvectica", 12))
+genListBox = Listbox(root, height=14, width = 25, font=("Helvectica", 12))
 genListBox.place(x=350, y=50)
 
 placeLabelAtPos(root, "Generation Fitness List", 352, 0)

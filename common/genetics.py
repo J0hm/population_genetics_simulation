@@ -131,7 +131,7 @@ def weightedChoice(chanceList):
     chosenIndex = 0
     chanceListLength = len(chanceList)
 
-    randFloat = round(rand.uniform(0, sum(chanceList)), 10) # Chances can add to any positive integer, this is used to account for errors that would happen if the range was 0 to 1 due to rounding 
+    randFloat = round(rand.uniform(0, sum(chanceList)), 10) # Chances can add to any positive integer, more flexible
 
     for j in range(chanceListLength):
         if randFloat <= currentSum:
