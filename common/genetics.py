@@ -91,8 +91,7 @@ def findReproductionChance(individualList, roundTo = 10):
 # Mutates one allele in individual 
 def mutateChromosome(individual):
     rand.seed()
-    #randAllele = rand.randrange(0, len(individual.chromosome)) 
-    randAllele = 5
+    randAllele = rand.randrange(0, len(individual.chromosome)) 
 
     strStart = individual.chromosome[0:randAllele]
     strEnd = individual.chromosome[randAllele+1:len(individual.chromosome)]
