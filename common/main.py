@@ -75,6 +75,8 @@ def newGenList(alleleCount, popSize):
 # Restarts simulation
 def restartSimulation():
         global currentGen
+        global individualGenList
+        
 
         individualGenList = newGenList(int(alleleCountEntry.get()), int(popSizeEntry.get()))
         currentGen = 0
@@ -96,8 +98,7 @@ def incrementGeneration():
         global lastGenPopList
         global desiredChromosome
 
-        mutationRate = float(mutationRateEntry.get())
-        newGenPopList = returnNextGen(individualGenList[currentGen-1].populationList, mutationRate, int(popSizeEntry.get()), int(alleleCountEntry.get()))
+        newGenPopList = returnNextGen(individualGenList[currentGen-1].populationList, float(mutationRateEntry.get()), int(popSizeEntry.get()), int(alleleCountEntry.get()))
         
         currentGen = currentGen + 1
 
