@@ -1,7 +1,18 @@
 import random as rand
+import time
+import matplotlib
+import matplotlib.animation as animation
+from matplotlib import style 
 from genetics import *
 from tkinter import *
 from math import *
+
+style.use('ggplot')
+f = Figure(figsize=(5,4), dpi=100)
+a = f.add_subplot(111)
+
+
+
 
 # These are constants but cannot be delcared as such in python
 # Changing them changes how the basic algorithms function
@@ -33,6 +44,22 @@ class individualGeneration():
                 self.minFitness = 0
                 self.meanFitness = 0
                 self.populationList = []
+
+
+def animate(i):
+    pullData = open('sampleText.txt','r').read()
+    dataArray = pullData.split('\n')
+    xar=[]
+    yar=[]
+    for eachLine in dataArray:
+        if len(eachLine)>1:
+            x,y = eachLine.split(',')
+            xar.append(int(x))
+            yar.append(int(y))
+    a.clear()
+    a.plot(xar,yar)
+
+
 
 # Places a label with text at x,y. Streamlines this process but is not ideal for every situation, as it does not let you change the value of the label
 def placeLabelAtPos(window, labelText, xPos, yPos, fontType = "Helvectica", fontSize = 16):
