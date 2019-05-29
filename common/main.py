@@ -6,7 +6,7 @@ from math import *
 import matplotlib.pyplot as plt
 import numpy as np
 
-
+# Test thing
 
 # These are constants but cannot be delcared as such in python
 # Changing them changes how the basic algorithms function
