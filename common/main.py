@@ -24,12 +24,7 @@ currentGen = 0
 desiredChromosome = ""
 lastGenPopList = []
 
-# Sets up graph and array
-graph = plt.figure()
-graph, ax_lst = plt.subplots(1, 1)
-npGenStats = np.array([[0], [0], [0]]) # Goes avg, min, max
-fig = Figure(figsize=(5, 4), dpi=100)
-axes = fig.add_subplot(111)
+
 
 # The main window class
 class Window(Frame):
@@ -54,13 +49,23 @@ class individualGeneration():
 # Adds generation to numpy array : must be in order
 def addNPGen(individualGenerationObject):
         global npGenStats
-        npGenStats = np.append(npGenStats, [[individualGenerationObject.meanFitness], [minFitness], [maxFitness]], axis=1)
+        npGenStats = np.append(npGenStats, [[individualGenerationObject.meanFitness], [individualGenerationObject.minFitness], [individualGenerationObject.maxFitness]], axis=1)
 
 
-def replot(axes, array):
-        axes.clear()
-        axes.plot(array.T)
-        axes.set_ylim(0, 1)
+def replot():
+        global npGenStats
+        # Sets up graph and array
+        graph = plt.figure()
+        graph, ax_lst = plt.subplots(1, 1)
+        fig = Figure(figsize=(5, 4), dpi=100)
+        figAxes = fig.add_subplot(111)
+        figAxes.plot(npGenStats.T)
+        figAxes.set_ylim(0, 1)
+        # Places canvas to draw graph
+        canvas = FigureCanvasTkAgg(fig, master=root)  # A tk.DrawingArea.
+        canvas.draw()
+        canvas.get_tk_widget().place(x=650, y=0)
+
 
 # Places a label with text at x,y. Streamlines this process but is not ideal for every situation, as it does not let you change the value of the label
 def placeLabelAtPos(window, labelText, xPos, yPos, fontType = "Helvectica", fontSize = 16):
@@ -113,6 +118,7 @@ def restartSimulation():
 
         # Resets NP array to gen 0
         npGenStats = np.array([[individualGenList[0].meanFitness], [individualGenList[0].minFitness], [individualGenList[0].maxFitness]])
+        replot()
 
         genLabelText = "Current Generation: " + str(currentGen)
         labelGeneration.config(text=genLabelText)
@@ -131,6 +137,8 @@ def incrementGeneration():
         global currentGen
         global lastGenPopList
         global desiredChromosome
+        global figAxes
+        global npGenStats
 
         newGenPopList = returnNextGen(individualGenList[currentGen-1].populationList, float(mutationRateEntry.get()), int(popSizeEntry.get()), int(alleleCountEntry.get()))
         
@@ -148,6 +156,9 @@ def incrementGeneration():
         newGen.populationList = newGenPopList
 
         individualGenList.append(newGen)   
+
+        addNPGen(newGen) # nigger
+        replot()
 
         lbxText = "Generation " + str(currentGen) + ": " + str(newGen.meanFitness)
         genListBox.insert(0, lbxText)
@@ -183,8 +194,19 @@ def changedSelection(evt):
 
 # Creates the root window
 root = Tk()
-root.geometry("600x340")
+root.geometry("1200x500")
 app = Window(root)
+
+# Sets up graph and array
+graph = plt.figure()
+graph, ax_lst = plt.subplots(1, 1)
+fig = Figure(figsize=(5, 4), dpi=100)
+figAxes = fig.add_subplot(111)
+
+# Places canvas to draw graph
+canvas = FigureCanvasTkAgg(fig, master=root)  # A tk.DrawingArea.
+canvas.draw()
+canvas.get_tk_widget().place(x=650, y=0)
 
 # Placing of GUI widgets
 placeLabelAtPos(root, "Enter Population Size", 0, 0, fontSize=12)
@@ -243,6 +265,8 @@ labelDetailedStatsAverage.place(x=0, y=265)
 
 labelDetailedStatsMinMax = Label(root, text = minMaxFitnessText, font=("Helvectica", 16))
 labelDetailedStatsMinMax.place(x=0, y=290)
+
+
 
 root.mainloop()
 
