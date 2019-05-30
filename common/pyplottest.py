@@ -10,28 +10,40 @@ from matplotlib.figure import Figure
 
 
 
-graph = plt.figure()
-graph, ax_lst = plt.subplots(1, 1)
 
-array = np.array([[.5, .7, .9], [.4, .5, .6], [.8, .9, 1.0]])
 
+array = np.array([[.5], [.4], [.8]])
 
 # Implement this in genetics.py
-def addNPGen(array, gen, avgFit, minFit, maxFit):
-    return np.append(array, [[gen], [avgFit], [minFit], [maxFit]], axis=1)
+def addNPGen(array, avgFit, minFit, maxFit):
+    return np.append(array, [[avgFit], [minFit], [maxFit]], axis=1)
 
+def replot(fig, array):
+    axes.clear()
+    axes.plot(array.T)
+    axes.set_ylim(0, 1)
 
-root = tkinter.Tk()
-
+graph = plt.figure()
+graph, ax_lst = plt.subplots(1, 1)
 fig = Figure(figsize=(5, 4), dpi=100)
-t = array
 axes = fig.add_subplot(111)
-axes.plot(t)
-axes.set_ylim([0,1])
+
+print(array)
+
+root = tkinter.Tk()6
 
 canvas = FigureCanvasTkAgg(fig, master=root)  # A tk.DrawingArea.
 canvas.draw()
 canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
+
+replot(axes, array)
+
+
+
+array = addNPGen(array, .6, .7, .8)
+replot(axes, array)
+
+
 
 
 tkinter.mainloop()

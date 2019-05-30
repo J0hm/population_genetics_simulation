@@ -5,8 +5,12 @@ from tkinter import *
 from math import *
 import matplotlib.pyplot as plt
 import numpy as np
+import pylab
+from matplotlib.backends.backend_tkagg import (
+    FigureCanvasTkAgg)
+from matplotlib.backend_bases import key_press_handler
+from matplotlib.figure import Figure
 
-# Test thing retested
 
 # These are constants but cannot be delcared as such in python
 # Changing them changes how the basic algorithms function
@@ -19,6 +23,13 @@ individualGenList = []
 currentGen = 0
 desiredChromosome = ""
 lastGenPopList = []
+
+# Sets up graph and array
+graph = plt.figure()
+graph, ax_lst = plt.subplots(1, 1)
+npGenStats = np.array([[0], [0], [0]]) # Goes avg, min, max
+fig = Figure(figsize=(5, 4), dpi=100)
+axes = fig.add_subplot(111)
 
 # The main window class
 class Window(Frame):
@@ -40,10 +51,22 @@ class individualGeneration():
                 self.populationList = []
 
 
+# Adds generation to numpy array : must be in order
+def addNPGen(individualGenerationObject):
+        global npGenStats
+        npGenStats = np.append(npGenStats, [[individualGenerationObject.meanFitness], [minFitness], [maxFitness]], axis=1)
+
+
+def replot(axes, array):
+        axes.clear()
+        axes.plot(array.T)
+        axes.set_ylim(0, 1)
+
 # Places a label with text at x,y. Streamlines this process but is not ideal for every situation, as it does not let you change the value of the label
 def placeLabelAtPos(window, labelText, xPos, yPos, fontType = "Helvectica", fontSize = 16):
         newPlacedLabel = Label(window, text = labelText, font=(fontType, fontSize))
         newPlacedLabel.place(x=xPos, y=yPos)
+
 
 # Creates a new gen0 and genList
 def newGenList(alleleCount, popSize):
@@ -78,14 +101,18 @@ def newGenList(alleleCount, popSize):
 
         return individualGenList
 
+
 # Restarts simulation
 def restartSimulation():
         global currentGen
         global individualGenList
-        
+        global npGenStats
 
         individualGenList = newGenList(int(alleleCountEntry.get()), int(popSizeEntry.get()))
         currentGen = 0
+
+        # Resets NP array to gen 0
+        npGenStats = np.array([[individualGenList[0].meanFitness], [individualGenList[0].minFitness], [individualGenList[0].maxFitness]])
 
         genLabelText = "Current Generation: " + str(currentGen)
         labelGeneration.config(text=genLabelText)
@@ -97,6 +124,7 @@ def restartSimulation():
         genListBox.delete(0, END)
         newGen0Text = "Generation 0: " + str(individualGenList[0].meanFitness)
         genListBox.insert(0, newGen0Text)
+
 
 # Increments to next generation
 def incrementGeneration():
