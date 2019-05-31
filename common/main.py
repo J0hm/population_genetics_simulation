@@ -23,6 +23,7 @@ individualGenList = []
 currentGen = 0
 desiredChromosome = ""
 lastGenPopList = []
+npGenStats = [[0], [0], [0]]
 
 
 
