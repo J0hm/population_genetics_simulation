@@ -10,6 +10,7 @@ from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg)
 from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
+import time
 
 
 # These are constants but cannot be delcared as such in python
@@ -24,6 +25,7 @@ currentGen = 0
 desiredChromosome = ""
 lastGenPopList = []
 npGenStats = [[0], [0], [0]]
+peakFitness = 0
 
 
 
@@ -56,16 +58,23 @@ def addNPGen(individualGenerationObject):
 def replot():
         global npGenStats
         # Sets up graph and array
+        plt.close('all')
         graph = plt.figure()
         graph, ax_lst = plt.subplots(1, 1)
-        fig = Figure(figsize=(5, 4), dpi=100)
+        fig = Figure(figsize=(6, 8), dpi=100)
         figAxes = fig.add_subplot(111)
-        figAxes.plot(npGenStats.T)
+        figAxes.plot(npGenStats[0].T, '-g', label="Average")
+        figAxes.plot(npGenStats[1].T, '-b', label="Min")
+        figAxes.plot(npGenStats[2].T, '-r', label="Max")
+        figAxes.legend(loc='upper left')
+        figAxes.set_title("Fitness Over Generations")
+        figAxes.set_ylabel("Fitness")
+        figAxes.set_xlabel("Generation")
         figAxes.set_ylim(0, 1)
         # Places canvas to draw graph
         canvas = FigureCanvasTkAgg(fig, master=root)  # A tk.DrawingArea.
         canvas.draw()
-        canvas.get_tk_widget().place(x=650, y=0)
+        canvas.get_tk_widget().place(x=700, y=-65)
 
 
 # Places a label with text at x,y. Streamlines this process but is not ideal for every situation, as it does not let you change the value of the label
@@ -113,6 +122,7 @@ def restartSimulation():
         global currentGen
         global individualGenList
         global npGenStats
+        global peakFitness
 
         individualGenList = newGenList(int(alleleCountEntry.get()), int(popSizeEntry.get()))
         currentGen = 0
@@ -121,12 +131,17 @@ def restartSimulation():
         npGenStats = np.array([[individualGenList[0].meanFitness], [individualGenList[0].minFitness], [individualGenList[0].maxFitness]])
         replot()
 
+        peakFitness = individualGenList[0].maxFitness
+        fitnessPeakLabel.config(text=("Peak Fitness (all gens): " + str(round(peakFitness, 8))))
+
         genLabelText = "Current Generation: " + str(currentGen)
         labelGeneration.config(text=genLabelText)
         averageLabelText = "Average Fitness: " + str(round(individualGenList[0].meanFitness, 5))
         labelMeanFitness.config(text=averageLabelText)
-        newMinMaxFitnessText = "Min/Max Fitness: " + str(round(individualGenList[0].minFitness, 5))  + ", " + str(round(individualGenList[0].maxFitness, 5)) 
-        labelMinMaxFitness.config(text=newMinMaxFitnessText)
+        newMinFitnessText = "Min Fitness: " + str(round(individualGenList[0].minFitness, 5))  
+        newMaxFitnessText = "Max Fitness: " + str(round(individualGenList[0].maxFitness, 5)) 
+        labelMinFitness.config(text=newMinFitnessText)
+        labelMaxFitness.config(text=newMaxFitnessText)
 
         genListBox.delete(0, END)
         newGen0Text = "Generation 0: " + str(individualGenList[0].meanFitness)
@@ -138,8 +153,10 @@ def incrementGeneration():
         global currentGen
         global lastGenPopList
         global desiredChromosome
-        global figAxes
         global npGenStats
+        global peakFitness
+
+        calcStart = time.time()
 
         newGenPopList = returnNextGen(individualGenList[currentGen-1].populationList, float(mutationRateEntry.get()), int(popSizeEntry.get()), int(alleleCountEntry.get()))
         
@@ -158,8 +175,7 @@ def incrementGeneration():
 
         individualGenList.append(newGen)   
 
-        addNPGen(newGen) # nigger
-        replot()
+        addNPGen(newGen) 
 
         lbxText = "Generation " + str(currentGen) + ": " + str(newGen.meanFitness)
         genListBox.insert(0, lbxText)
@@ -170,9 +186,22 @@ def incrementGeneration():
         averageText = "Average Fitness: " + str(round(newGen.meanFitness, 5))
         labelMeanFitness.config(text=averageText)
 
-        minMaxText = "Min/Max Fitness: " + str(round(newGen.minFitness, 5))  + ", " + str(round(newGen.maxFitness, 5)) 
-        labelMinMaxFitness.config(text=minMaxText)
+        minText = "Min Fitness: " + str(round(newGen.minFitness, 5))
+        maxText = "Max Fitness: " + str(round(newGen.maxFitness, 5)) 
+        labelMaxFitness.config(text=maxText)
+        labelMinFitness.config(text=minText)
 
+        if newGen.maxFitness > peakFitness:
+                peakFitness = newGen.maxFitness
+                fitnessPeakLabel.config(text=("Peak Fitness (all gens): " + str(round(peakFitness, 8))))
+                print("test")
+        
+        replot()
+
+        calcEnd = time.time()
+
+        opTimeListBox.insert(0, (str(round((calcEnd-calcStart)*1000, 12)) + " ms"))
+        
 def changedSelection(evt):
         global individualGenList
 
@@ -188,70 +217,83 @@ def changedSelection(evt):
         detailedAverageText = "Average Fitness: " + str(round(selectedGen.meanFitness, 5))
         labelDetailedStatsAverage.config(text=detailedAverageText)
 
-        detailedMinMaxText = "Min/Max Fitness: " + str(round(selectedGen.minFitness, 5))  + ", " + str(round(selectedGen.maxFitness, 5))
-        labelDetailedStatsMinMax.config(text=detailedMinMaxText)
+        detailedMinText = "Min Fitness: " + str(round(selectedGen.minFitness, 5))  
+        labelDetailedStatsMin.config(text=detailedMinText)
+        deatailedMaxText = "Max Fitness: " + str(round(selectedGen.maxFitness, 5))
+        labelDetailedStatsMax.config(text=deatailedMaxText)
 
 
+def stepGenerations():
+        for i in range(int(stepCountEntry.get())):
+                incrementGeneration()
 
 # Creates the root window
 root = Tk()
-root.geometry("1200x500")
+root.geometry("1280x720")
 app = Window(root)
 
-# Sets up graph and array
-graph = plt.figure()
-graph, ax_lst = plt.subplots(1, 1)
-fig = Figure(figsize=(5, 4), dpi=100)
-figAxes = fig.add_subplot(111)
-
-# Places canvas to draw graph
-canvas = FigureCanvasTkAgg(fig, master=root)  # A tk.DrawingArea.
-canvas.draw()
-canvas.get_tk_widget().place(x=650, y=0)
-
 # Placing of GUI widgets
-placeLabelAtPos(root, "Enter Population Size", 0, 0, fontSize=12)
-popSizeEntry = Entry(root)
-popSizeEntry.place(x=170, y=3)
+placeLabelAtPos(root, "Enter Population Size", 0, 0, fontSize=16)
+popSizeEntry = Entry(root, font=("Helvectica", 12))
+popSizeEntry.place(x=210, y=5)
 popSizeEntry.insert(0, "100")
 
-placeLabelAtPos(root, "Enter Allele Count", 0, 20, fontSize=12)
-alleleCountEntry = Entry(root)
-alleleCountEntry.place(x=170, y=23)
+placeLabelAtPos(root, "Enter Allele Count", 0, 30, fontSize=16)
+alleleCountEntry = Entry(root, font=("Helvectica", 12))
+alleleCountEntry.place(x=210, y=35)
 alleleCountEntry.insert(0, "64")
 
-placeLabelAtPos(root, "Enter Muatation Rate", 0, 40, fontSize=12)
-mutationRateEntry = Entry(root)
-mutationRateEntry.place(x=170, y=43)
+placeLabelAtPos(root, "Enter Muatation Rate", 0, 60, fontSize=16)
+mutationRateEntry = Entry(root, font=("Helvectica", 12))
+mutationRateEntry.place(x=210, y=65)
 mutationRateEntry.insert(0, "0.05")
 
-newSimButton = Button(root, text="New Simulation", command=restartSimulation, font=("Helvectica", 12), width=32)
-newSimButton.place(x=0, y=65)
+newSimButton = Button(root, text="New Simulation", command=restartSimulation, font=("Helvectica", 12), width=43)
+newSimButton.place(x=0, y=100)
 
 
 individualGenList = newGenList(int(alleleCountEntry.get()), int(popSizeEntry.get()))
 
-
-nextGenButton = Button(root, text="Next Generation", command = incrementGeneration, font=("Helvectica", 12), width=32)
-nextGenButton.place(x=0, y= 175)
+nextGenButton = Button(root, text="Next Generation", command = incrementGeneration, font=("Helvectica", 12), width=43)
+nextGenButton.place(x=0, y= 265)
 
 generationText = "Current Generation: " + str(currentGen)
 labelGeneration = Label(root, text = generationText, font=("Helvectica", 16))
-labelGeneration.place(x=0, y=100)
+labelGeneration.place(x=0, y=140)
 
 averageFitnessText = "Average Fitness: " + str(round(individualGenList[0].meanFitness, 5))
 labelMeanFitness = Label(root, text = averageFitnessText, font=("Helvectica", 16))
-labelMeanFitness.place(x=0, y=125)
+labelMeanFitness.place(x=0, y=170)
 
-minMaxFitnessText = "Min/Max Fitness: " + str(round(individualGenList[0].minFitness, 5))  + ", " + str(round(individualGenList[0].maxFitness, 5)) 
-labelMinMaxFitness = Label(root, text = minMaxFitnessText, font=("Helvectica", 16))
-labelMinMaxFitness.place(x=0, y=150)
+minFitnessText = "Min Fitness: " + str(round(individualGenList[0].minFitness, 5))
+labelMinFitness = Label(root, text = minFitnessText, font=("Helvectica", 16))
+labelMinFitness.place(x=0, y=200)
 
-genListBox = Listbox(root, height=14, width = 25, font=("Helvectica", 12))
-genListBox.place(x=350, y=50)
+maxFitnessText = "Max Fitness: " +  str(round(individualGenList[0].maxFitness, 5))
+labelMaxFitness = Label(root, text = maxFitnessText, font=("Helvectica", 16))
+labelMaxFitness.place(x=0, y=230)
 
-placeLabelAtPos(root, "Generation Fitness List", 352, 0)
-placeLabelAtPos(root, "Click to View Detailed Stats", 360, 25, fontSize=12)
+placeLabelAtPos(root, "Enter Step Count", 0, 300)
+stepCountEntry = Entry(root, font=("Helvectica", 12))
+stepCountEntry.place(x=210, y=305)
+stepCountEntry.insert(0, "10")
+
+stepGenBtn = Button(root, text="Step Generations", command = stepGenerations, font=("Helvectica", 12), width=43)
+stepGenBtn.place(x=0, y=330)
+
+fitnessPeakLabel = Label(root, text=("Peak Fitness (all gens): " + str(round(individualGenList[0].maxFitness, 8))), font=("Helvectica", 16))
+fitnessPeakLabel.place(x=0, y=365)
+
+genListBox = Listbox(root, height=29, width = 25, font=("Helvectica", 12))
+genListBox.place(x=400, y=50)
+
+placeLabelAtPos(root, "Operation Length (ms)", 90, 400)
+
+opTimeListBox = Listbox(root, height=15, width=43, font=("Helvectica", 12))
+opTimeListBox.place(x=0, y=430)
+
+placeLabelAtPos(root, "Generation Fitness List", 402, 0)
+placeLabelAtPos(root, "Click to View Detailed Stats", 410, 25, fontSize=12)
 
 gen0 = individualGenList[0]
 gen0Text = "Generation 0: " + str(round(individualGenList[0].meanFitness, 10))
@@ -259,15 +301,19 @@ genListBox.insert(0, gen0Text)
 genListBox.bind('<<ListboxSelect>>', changedSelection)
 
 labelDetailedStatsFor = Label(root, text = "Detailed Stats For Gen: 0", font=("Helvectica", 16))
-labelDetailedStatsFor.place(x=0, y= 240)
+labelDetailedStatsFor.place(x=395, y= 600)
 
 labelDetailedStatsAverage = Label(root, text = averageFitnessText, font=("Helvectica", 16))
-labelDetailedStatsAverage.place(x=0, y=265)
+labelDetailedStatsAverage.place(x=395, y=630)
 
-labelDetailedStatsMinMax = Label(root, text = minMaxFitnessText, font=("Helvectica", 16))
-labelDetailedStatsMinMax.place(x=0, y=290)
+labelDetailedStatsMax = Label(root, text = maxFitnessText, font=("Helvectica", 16))
+labelDetailedStatsMax.place(x=395, y=660)
 
+labelDetailedStatsMin = Label(root, text = minFitnessText, font=("Helvectica", 16))
+labelDetailedStatsMin.place(x=395, y=690)
 
+restartSimulation()
+replot()
 
 root.mainloop()
 
