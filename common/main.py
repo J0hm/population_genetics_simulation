@@ -238,7 +238,7 @@ popSizeEntry = Entry(root, font=("Helvectica", 12))
 popSizeEntry.place(x=210, y=5)
 popSizeEntry.insert(0, "100")
 
-placeLabelAtPos(root, "Enter Allele Count", 0, 30, fontSize=16)
+placeLabelAtPos(root, "Enter Trait Count", 0, 30, fontSize=16)
 alleleCountEntry = Entry(root, font=("Helvectica", 12))
 alleleCountEntry.place(x=210, y=35)
 alleleCountEntry.insert(0, "64")
