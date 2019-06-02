@@ -194,7 +194,6 @@ def incrementGeneration():
         if newGen.maxFitness > peakFitness:
                 peakFitness = newGen.maxFitness
                 fitnessPeakLabel.config(text=("Peak Fitness (all gens): " + str(round(peakFitness, 8))))
-                print("test")
         
         replot()
 
