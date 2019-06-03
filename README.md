@@ -1,6 +1,6 @@
 # population_genetics_simulation
 A light weight genetics simulation program written in Python, designed to easily run on any computer. 
-Does not simulate population growtn.
+Does not simulate population growth.
 
 .exe for Windows computers is under common/dist
 
